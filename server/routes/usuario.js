@@ -2,6 +2,7 @@
 const express = require('express');
 const app = express();
 const Usuario = require('../models/usuario.js');
+const bcrypt = require('bcrypt');
 
 app.get('/usuario', (req, res) => {
 
@@ -13,10 +14,11 @@ app.post('/usuario', (req, res) => {
     let body = req.body;
 
     // Se formatea como se obtiene captura la información a partir del schema de usuario.
+    // Se encripta la contraseñá con metodo de una via. (Usando bcrypt)
     let usuario = new Usuario({
         nombre: body.nombre,
         email: body.email,
-        password: body.password,
+        password: bcrypt.hashSync(body.password, 10),
         role: body.role  
     });
 
@@ -27,7 +29,10 @@ app.post('/usuario', (req, res) => {
                ok: false,
                err
             });
-        }
+        };
+
+        usuarioDB.password = null;
+        
         res.json({
             ok: true,
             usuario: usuarioDB

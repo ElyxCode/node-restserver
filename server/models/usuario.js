@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
 const uniqueValidator = require('mongoose-unique-validator');
 
+// Objeto que guarda los roles requeridos para el campo roles.
 let rolesValidos = {
     values: ['ADMIN_ROLE', 'USER_ROLE'],
     message: '{VALUE} no es un rol válido'
@@ -8,6 +9,8 @@ let rolesValidos = {
 
 let Schema = mongoose.Schema;
 
+
+// Creamos un esquema con los atributos que requiren los campos para guardarlos en la base de datos.
 let usuarioSchema = new Schema({
     nombre: {
         type: String,
@@ -41,5 +44,18 @@ let usuarioSchema = new Schema({
     }
 });
 
-usuarioSchema.plugin(uniqueValidator, { message: '{PATH} debe de ser único'})
+// Elimina el campo 'Password' en la impresión del objeto en pantalla. 
+// No se mostrará este campo en resultado cuando se guarde un usuario.
+usuarioSchema.methods.toJSON = function() {
+    let user = this;
+    let userObject = user.toObject();
+    delete userObject.password;
+
+    return userObject;
+}
+
+// Aplica el plugin en el schema (Mensaje de erro más 'amigable')
+usuarioSchema.plugin(uniqueValidator, { message: '{PATH} debe de ser único'});
+
+// Exporta el esquema usuario
 module.exports = mongoose.model('Usuario', usuarioSchema);
