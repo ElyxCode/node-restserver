@@ -13,20 +13,22 @@ app.get('/usuario', (req, res) => {
     let porPagina = req.query.porPagina || 5; // Cuantos registros se mostrarán.
     porPagina = Number(porPagina);
 
+
+
     // Función que devuelve los registros de usuarios de la base de datos.
-    Usuario.find({}, 'nombre email role estado google img')
+    Usuario.find({estado: true}, 'nombre email role estado google img')
             .skip(desde)
             .limit(porPagina)
             .exec((err, usuarios) => {
                 if(err) {
                     return res.status(400).json({
-                    ok: false,
-                    err
+                        ok: false,
+                        err
                     });
                 };
 
                 // Función que devuelve la cantidad de registros.
-                Usuario.count({}, (err, conteo) => {
+                Usuario.count({estado: true}, (err, conteo) => {
 
                     res.json({
                         ok: true,
@@ -87,9 +89,49 @@ app.put('/usuario/:id', (req, res) => {
     });
 });
 
-app.delete('/usuario', (req, res) => {
+app.delete('/usuario/:id', (req, res) => {
 
-    res.json('deleteUsuario!');
+    let id = req.params.id;
+    // let body = _.pick(req.body, ['estado']);
+    // body.estado = false;
+    let cambiarEstado = {
+        estado: false
+    };
+
+
+    Usuario.findByIdAndUpdate(id, cambiarEstado, {new: true}, (err, usuarioBorrado) => {
+        
+        if(err) {
+            return res.status(400).json({
+               ok: false,
+               err
+            });
+        };  
+
+        res.json({
+            id,
+            usuario: usuarioBorrado
+        });
+    });
 });
 
 module.exports = app;
+
+
+// Usuario.findByIdAndRemove(id, body, (err, usuarioBorrado) => {
+
+    //     // Si falla devuelve un status 400.
+    //     if(err) {
+    //         return res.status(400).json({
+    //            ok: false,
+    //            err
+    //         });
+    //     };
+    // if(!usuarioBorrado) {
+    //     return res.status(400).json({
+    //         ok: false,
+    //         err: {
+    //             message: 'Usuario no encontrado'
+    //         }
+    //      });
+    // } ;
