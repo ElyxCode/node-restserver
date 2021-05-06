@@ -7,7 +7,34 @@ const _ = require('underscore');
 
 app.get('/usuario', (req, res) => {
 
-    res.json('getUsuario local!');
+    let desde = req.query.desde || 0;   // Desde que registros se empiza.
+    desde = Number(desde); 
+
+    let porPagina = req.query.porPagina || 5; // Cuantos registros se mostrarán.
+    porPagina = Number(porPagina);
+
+    // Función que devuelve los registros de usuarios de la base de datos.
+    Usuario.find({}, 'nombre email role estado google img')
+            .skip(desde)
+            .limit(porPagina)
+            .exec((err, usuarios) => {
+                if(err) {
+                    return res.status(400).json({
+                    ok: false,
+                    err
+                    });
+                };
+
+                // Función que devuelve la cantidad de registros.
+                Usuario.count({}, (err, conteo) => {
+
+                    res.json({
+                        ok: true,
+                        usuarios,
+                        registros: conteo
+                    });
+                });
+            });
 });
 
 app.post('/usuario', (req, res) => {
