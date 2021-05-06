@@ -23,7 +23,7 @@ if (process.env.NODE_ENV === 'dev') {
    
 } else {
 
-    urlDatabase = 'mongodb+srv://douglas:echoes1992@sandbox.yojva.mongodb.net/cafe?retryWrites=true&w=majority';
+    urlDatabase = process.env.MONGO_URL;
 
 } 
 
