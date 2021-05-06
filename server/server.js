@@ -13,8 +13,9 @@ app.use(bodyParser.urlencoded({ extended: false}));
 // parse application/json
 app.use(bodyParser.json()); 
 
-// Exportamos las rutas
-app.use(require('./routes/usuario.js'));
+// Importamos la configuración global de rutas.
+app.use(require('./routes/index.js'));
+
 
 // Conexión a la base de datos Mongodb
 mongoose.connect(process.env.URLDB, (err, res) => {
