@@ -4,16 +4,15 @@ const app = express();
 const Usuario = require('../models/usuario.js');
 const bcrypt = require('bcrypt');
 const _ = require('underscore');
+const { verificarToken, verificarAdminRole } = require('../middlewares/autenticacion.js');
 
-app.get('/usuario', (req, res) => {
+app.get('/usuario', verificarToken, (req, res) => {
 
-    let desde = req.query.desde || 0;   // Desde que registros se empiza.
+    let desde = req.query.desde || 0;   // Desde que registros se empieza.
     desde = Number(desde); 
 
     let porPagina = req.query.porPagina || 5; // Cuantos registros se mostrarán.
     porPagina = Number(porPagina);
-
-
 
     // Función que devuelve los registros de usuarios de la base de datos.
     Usuario.find({estado: true}, 'nombre email role estado google img')
@@ -39,7 +38,7 @@ app.get('/usuario', (req, res) => {
             });
 });
 
-app.post('/usuario', (req, res) => {
+app.post('/usuario', [verificarToken, verificarAdminRole], (req, res) => {
 
     let body = req.body;
 
@@ -68,7 +67,7 @@ app.post('/usuario', (req, res) => {
     });
 });
 
-app.put('/usuario/:id', (req, res) => {
+app.put('/usuario/:id', [verificarToken, verificarAdminRole], (req, res) => {
 
     let id = req.params.id;
     let body = _.pick(req.body, ['nombre', 'email', 'img', 'role', 'estado']);
@@ -89,7 +88,7 @@ app.put('/usuario/:id', (req, res) => {
     });
 });
 
-app.delete('/usuario/:id', (req, res) => {
+app.delete('/usuario/:id', [verificarToken, verificarAdminRole], (req, res) => {
 
     let id = req.params.id;
     // let body = _.pick(req.body, ['estado']);
