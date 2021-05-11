@@ -29,7 +29,7 @@ app.post('/login', (req, res) => {
             return res.status(500).json({
                 ok: false,
                 err: {
-                    message: 'Usuario o constraseña incorrecto'
+                    message: '*Usuario o constraseña incorrecto'
                 }
              });
         };
@@ -39,7 +39,7 @@ app.post('/login', (req, res) => {
             return res.status(500).json({
                 ok: false,
                 err: {
-                    message: 'Usuario o constraseña incorrecto'
+                    message: 'Usuario o *constraseña incorrecto'
                 }
              });
         };
@@ -127,14 +127,16 @@ app.post('/google', async (req, res) => {
             usuario.email = googleUser.email;
             usuario.img = googleUser.img;
             usuario.google = true;
-            usuario.password = ':)';
+            usuario.password = bcrypt.hashSync(":)", 10);
 
             usuario.save((err, usuarioDB) => {
-
-                return res.status(400).json({
-                    ok: false,
-                    err
-                });
+                
+                if(err){
+                    return res.status(400).json({
+                        ok: false,
+                        err
+                    });
+                };
 
                 let token = jwt.sign({
                     usuario: usuarioDB

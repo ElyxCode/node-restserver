@@ -79,7 +79,7 @@ app.put('/usuario/:id', [verificarToken, verificarAdminRole], (req, res) => {
                ok: false,
                err
             });
-        }
+        };
 
         res.json({
             id,
