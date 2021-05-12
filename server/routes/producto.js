@@ -27,10 +27,14 @@ app.get('/producto', verificarToken, (req, res) => {
                         err
                     });
                 };
-
-                res.json({
-                    ok: true,
-                    productos: producto
+                
+                Producto.count((err, conteo) => {
+                    
+                    res.json({
+                        ok: true,
+                        productos: producto,
+                        registro: conteo
+                    });
                 });
             });
 
