@@ -69,6 +69,35 @@ let id = req.params.id;
 });
 
 // ========================
+// Crear producto por nombre
+// ========================
+
+app.get('/producto/buscar/:termino', verificarToken, (req, res) => {
+
+    let termino = req.params.termino;
+
+    // Hacer busqueda por nombre
+    let regex = new RegExp(termino, 'i'); // 'i' insensible  mayuscular y minusculas
+
+    Producto.find({nombre: regex})
+            .populate('categoria', 'nombre')
+            .exec((err, producto) => {
+                if(err){
+                    return res.status(400).json({
+                        ok: false,
+                        err
+                    });
+                };
+
+                res.json({
+                    ok: true,
+                    productos: producto
+                });
+            })
+});
+
+
+// ========================
 // Crear producto
 // ========================
 
